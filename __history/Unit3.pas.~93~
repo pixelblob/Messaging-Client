@@ -75,12 +75,14 @@ s : String;
 
 begin
 
-if FileAge(filename) <> lastTime then begin
+if FileAge(filename) = lastTime then begin
 
   AssignFile(Txt, filename);
   Reset(Txt);
   Readln(Txt, s);
+  if s <> messageTxt then begin
     RichEdit1.Lines.Add(s);
+  end;
   messageTxt := s;
   CloseFile(Txt);
 

@@ -75,7 +75,7 @@ s : String;
 
 begin
 
-if FileAge(filename) <> lastTime then begin
+if FileAge(filename) != lastTime then begin
 
   AssignFile(Txt, filename);
   Reset(Txt);

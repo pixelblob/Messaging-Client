@@ -45,7 +45,7 @@ var Txt: TextFile;
 begin
 
 while not FileExists(filename) do begin
-    filename := Dialogs.InputBox('Server Selection', 'Please enter your the servers file location:', './test.txt');
+    filename := Dialogs.InputBox('Server Selection', 'Please enter your the servers file location:', './test');
     if filename = '' then break;
 end;
 
@@ -58,7 +58,7 @@ if FileExists('name') then begin
   CloseFile(Txt);
 end
 else begin
-    username := Dialogs.InputBox('Username Selection', 'Please enter your username:', 'test');
+    username := Dialogs.InputBox('Username Selection', 'Please enter your username:', '');
     if username = '' then Application.Terminate;
 
 end;
@@ -75,12 +75,14 @@ s : String;
 
 begin
 
-if FileAge(filename) <> lastTime then begin
+if FileAge(filename) = lastTime then begin
 
   AssignFile(Txt, filename);
   Reset(Txt);
   Readln(Txt, s);
+  if s <> messageTxt then begin
     RichEdit1.Lines.Add(s);
+  end;
   messageTxt := s;
   CloseFile(Txt);
 

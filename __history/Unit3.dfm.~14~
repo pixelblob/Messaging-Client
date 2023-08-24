@@ -53,7 +53,7 @@ object Form3: TForm3
   end
   object Timer1: TTimer
     Enabled = False
-    Interval = 10
+    Interval = 2000
     OnTimer = Timer1Timer
     Left = 632
     Top = 8
