@@ -83,7 +83,7 @@ end;
 
 procedure TForm3.FormClose(Sender: Tobject; var Action: TCloseAction);
 begin
-  DeleteFile(filename + playerId);
+  DeleteFile('G:\players\' + playerId);
 end;
 
 procedure TForm3.FormCreate(Sender: Tobject);
@@ -105,10 +105,10 @@ begin
 
   filename := 'G:\players\';
 
-  while not DirectoryExists(filename) do
+  while not FileExists(filename) do
   begin
     filename := Dialogs.InputBox('Server Selection',
-      'Please enter your the servers file location:', '');
+      'Please enter your the servers file location:', '"G:\test\test"');
     filename := StringReplace(filename, '"', '', [rfReplaceAll]);
     if filename = '' then
       break;
@@ -221,7 +221,7 @@ begin
 
   I := 0;
 
-  for path in TDirectory.GetFiles(filename) do
+  for path in TDirectory.GetFiles('G:\players') do
   begin
     id := TPath.GetFileNameWithoutExtension(path);
     // writeln(id);
@@ -294,7 +294,7 @@ var
   Txt: TextFile;
 begin
 
-  AssignFile(Txt, filename + playerId);
+  AssignFile(Txt, 'G:\players\' + playerId);
   Rewrite(Txt);
   writeln(Txt, data);
   CloseFile(Txt);

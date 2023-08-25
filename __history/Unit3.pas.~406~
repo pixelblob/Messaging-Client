@@ -83,7 +83,7 @@ end;
 
 procedure TForm3.FormClose(Sender: Tobject; var Action: TCloseAction);
 begin
-  DeleteFile(filename + playerId);
+  DeleteFile('G:\players\' + playerId);
 end;
 
 procedure TForm3.FormCreate(Sender: Tobject);

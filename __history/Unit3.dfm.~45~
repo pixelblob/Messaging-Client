@@ -28,14 +28,12 @@ object Form3: TForm3
   end
   object Timer1: TTimer
     Enabled = False
-    Interval = 32
     OnTimer = Timer1Timer
     Left = 632
     Top = 8
   end
   object Timer2: TTimer
     Enabled = False
-    Interval = 32
     OnTimer = Timer2Timer
     Left = 576
     Top = 192

@@ -1,0 +1,289 @@
+unit Unit3;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls, superobject, DateUtils, IOUtils;
+
+  type
+    Tplayer = class(Tobject)
+      var x, y, oldX, oldY, lastPing: Real;
+      id: String;
+    end;
+
+type
+  TForm3 = class(TForm)
+    Timer1: TTimer;
+    Timer2: TTimer;
+    Image1: TImage;
+    deleteInactive: TTimer;
+    paintCanvas: TTimer;
+    procedure FormCreate(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Timer2Timer(Sender: TObject);
+    procedure writeData(data: String);
+    procedure Button2Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    function lerp(start: Real; endd: Real; amt: Real): Real;
+    function addPlayer(id: String): Tplayer;
+    function playerExists(id: String): Bool;
+    function getPlayer(id: String): Tplayer;
+    procedure FormResize(Sender: TObject);
+    procedure paintCanvasTimer(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form3: TForm3;
+  messageTxt, username, filename: string;
+  lastTime: TDateTime;
+  playerId: string;
+  playerArray: array of tplayer;
+
+implementation
+
+{$R *.dfm}
+
+function TForm3.addPlayer(id: String): Tplayer;
+var player: tplayer;
+begin
+  player := Tplayer.Create;
+  player.x := 0;
+  player.y := 0;
+  player.id := id;
+  player.lastPing := DateUtils.MilliSecondsBetween(Now, 0);
+
+  SetLength(playerArray, Length(playerArray)+1);
+  playerArray[High(playerArray)] := player;
+
+  result := player;
+end;
+
+procedure TForm3.Button1Click(Sender: TObject);
+var
+  Txt: TextFile;
+begin
+  // AssignFile(Txt, filename);
+  // Rewrite(Txt);
+  // writeln(Txt, username+': '+Edit1.Text);
+  // CloseFile(Txt);
+  // Edit1.Text := '';
+end;
+
+procedure TForm3.Button2Click(Sender: TObject);
+begin
+  Timer2.Enabled := True;
+end;
+
+procedure TForm3.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  DeleteFile('G:\players\' + playerId);
+end;
+
+procedure TForm3.FormCreate(Sender: TObject);
+var
+  path: string;
+begin
+
+  AllocConsole;
+
+  playerId := inttostr(DateUtils.MilliSecondsBetween(Now, 0));
+
+  // playerId := '3902146727059';
+
+  FileClose(FileCreate('G:\players\' + playerId));
+
+  //while not FileExists(filename) do
+  //begin
+  //  filename := Dialogs.InputBox('Server Selection',
+  //    'Please enter your the servers file location:', '"G:\test\test"');
+  //  filename := StringReplace(filename, '"', '', [rfReplaceAll]);
+  //  if filename = '' then
+  //    break;
+  //end;
+
+  //if filename = '' then
+  //  Application.Terminate;
+
+  //lastTime := FileAge(filename);
+
+  Timer1.Enabled := True;
+  Timer2.Enabled := True;
+
+end;
+
+procedure TForm3.FormResize(Sender: TObject);
+begin
+Image1.Picture.Bitmap.Width := Image1.Width;
+  Image1.Picture.Bitmap.Height := Image1.Height;
+end;
+
+function TForm3.getPlayer(id: String): Tplayer;
+var I : Integer;
+begin
+  for I := 0 to Length(playerArray)-1 do begin
+    if playerArray[I].id = id then begin
+      result := playerArray[I];
+    end;
+  end;
+end;
+
+function TForm3.lerp(start, endd, amt: Real): Real;
+begin
+  result := (1-amt)*start+amt*endd;
+end;
+
+procedure TForm3.paintCanvasTimer(Sender: TObject);
+var I : Integer;
+path, id: string;
+time: Real;
+   x, y, oldX, oldY, size: Real;
+begin
+
+Image1.Canvas.Brush.Color := clWhite;
+
+  Image1.Canvas.Rectangle(-1, -1, Form3.ClientWidth+1, Form3.ClientHeight+1);
+
+size := 30;
+
+  for I := 0 to Length(playerArray)-1 do begin
+    RandSeed := StrToInt64(playerArray[I].id);
+
+      oldx:= playerArray[I].oldX;
+    oldy:= playerArray[I].oldY;
+
+     //playerArray[I].x := newX;
+
+     x:= playerArray[I].x;
+    y:= playerArray[I].y;
+
+    time := 0.4;
+
+    writeln(time);
+
+    playerArray[I].oldx := lerp(oldX, x, time);
+    playerArray[I].oldy := lerp(oldY, y, time);
+
+
+
+      Image1.Canvas.Brush.Color := rgb(155 + round(random * 100),
+        155 + round(random * 100), 155 + round(random * 100));
+
+      Image1.Canvas.Rectangle(round(oldX - size / 2), round(oldY - size / 2),
+        round(oldX + size / 2), round(oldY + size / 2));
+
+  end;
+end;
+
+function TForm3.playerExists(id: String): Bool;
+var I : Integer;
+begin
+result := false;
+  for I := 0 to Length(playerArray)-1 do begin
+    if playerArray[I].id = id then begin
+      result := true;
+    end;
+  end;
+end;
+
+procedure TForm3.Timer1Timer(Sender: TObject);
+var
+  Txt: TextFile;
+  FileDateTime: TDateTime;
+  s: String;
+  slFile: TStrings;
+  stream: TStream;
+  obj: ISuperObject;
+var
+  path, id: string;
+  i, x, y, size: integer;
+  player: Tplayer;
+begin
+
+  i := 0;
+
+
+
+  
+
+  for path in TDirectory.GetFiles('G:\players') do
+  begin
+    id := TPath.GetFileNameWithoutExtension(path);
+    //writeln(id);
+    //if not FileExists(path) then exit end;
+
+    //writeln(Length(playerArray));
+    //writeln(playerExists(id));
+
+
+
+    if not playerExists(id) then begin
+      addPlayer(id);
+    end;
+
+    player := getPlayer(id);
+
+    slFile := TStringList.Create;
+
+    stream := TFileStream.Create(path, fmOpenRead or fmShareDenyNone);
+
+    slFile.LoadFromStream(stream);
+
+    if slFile.Count <> 0 then
+    begin
+
+      obj := SO(slFile.Text);
+
+      player.y := obj.AsObject.i['y'];
+      player.x := obj.AsObject.i['x'];
+
+      //RandSeed := StrToInt64(id);
+
+      //Image1.Canvas.Brush.Color := rgb(155 + round(random * 100),
+      //  155 + round(random * 100), 155 + round(random * 100));
+
+     // Image1.Canvas.Rectangle(round(x - size / 2), round(y - size / 2),
+      //  round(x + size / 2), round(y + size / 2));
+
+      //writeln(slFile.Text);
+      inc(i);
+    end;
+  end;
+
+end;
+
+procedure TForm3.Timer2Timer(Sender: TObject);
+var
+  pt: TPoint;
+  ypos, xpos: integer;
+  FileDateTime: TDateTime;
+begin
+  // cum
+  GetCursorPos(pt);
+  pt := ScreenToClient(pt);
+  xpos := pt.x;
+  ypos := pt.y;
+  FileAge(filename, FileDateTime);
+  writeData('{"x":' + inttostr(xpos) + ',"y":' + inttostr(ypos) + '}');
+end;
+
+
+
+procedure TForm3.writeData(data: String);
+var
+  Txt: TextFile;
+begin
+
+  AssignFile(Txt, 'G:\players\' + playerId);
+  Rewrite(Txt);
+  writeln(Txt, data);
+  CloseFile(Txt);
+
+end;
+
+end.

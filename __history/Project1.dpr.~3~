@@ -1,0 +1,16 @@
+program Project1;
+
+uses
+  Forms,
+  Unit3 in 'Unit3.pas' {Form3},
+  test in 'test.pas' {player};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm3, Form3);
+  Application.CreateForm(Tplayer, player);
+  Application.Run;
+end.

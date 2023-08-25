@@ -1,5 +1,6 @@
 unit Unit3;
-interface
+
+interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
@@ -83,7 +84,7 @@ end;
 
 procedure TForm3.FormClose(Sender: Tobject; var Action: TCloseAction);
 begin
-  DeleteFile(filename + playerId);
+  DeleteFile('G:\players\' + playerId);
 end;
 
 procedure TForm3.FormCreate(Sender: Tobject);
@@ -93,29 +94,25 @@ begin
 
   AllocConsole;
 
-
-
-    playerId := inttostr(DateUtils.MilliSecondsBetween(Now, 0));
+  playerId := inttostr(DateUtils.MilliSecondsBetween(Now, 0));
 
   addPlayer(playerId);
 
   // playerId := '3902146727059';
 
+  FileClose(FileCreate('G:\players\' + playerId));
 
+  // while not FileExists(filename) do
+  // begin
+  // filename := Dialogs.InputBox('Server Selection',
+  // 'Please enter your the servers file location:', '"G:\test\test"');
+  // filename := StringReplace(filename, '"', '', [rfReplaceAll]);
+  // if filename = '' then
+  // break;
+  // end;
 
-  filename := 'G:\players\';
-
-  while not DirectoryExists(filename) do
-  begin
-    filename := Dialogs.InputBox('Server Selection',
-      'Please enter your the servers file location:', '');
-    filename := StringReplace(filename, '"', '', [rfReplaceAll]);
-    if filename = '' then
-      break;
-  end;
-
-   if filename = '' then
-   Application.Terminate;
+  // if filename = '' then
+  // Application.Terminate;
 
   // lastTime := FileAge(filename);
 
@@ -221,7 +218,7 @@ begin
 
   I := 0;
 
-  for path in TDirectory.GetFiles(filename) do
+  for path in TDirectory.GetFiles('G:\players') do
   begin
     id := TPath.GetFileNameWithoutExtension(path);
     // writeln(id);
@@ -282,8 +279,8 @@ begin
   xpos := pt.x;
   ypos := pt.y;
 
-  getPlayer(playerId).y := ypos;
-  getPlayer(playerId).x := xpos;
+  getPlayer(playerId).y := xpos;
+  getPlayer(playerId).x := ypos;
 
   FileAge(filename, FileDateTime);
   writeData('{"x":' + inttostr(xpos) + ',"y":' + inttostr(ypos) + '}');
@@ -294,7 +291,7 @@ var
   Txt: TextFile;
 begin
 
-  AssignFile(Txt, filename + playerId);
+  AssignFile(Txt, 'G:\players\' + playerId);
   Rewrite(Txt);
   writeln(Txt, data);
   CloseFile(Txt);
